@@ -37,6 +37,14 @@ public class ProductService implements IProductService {
         }
         return null;
     }
+    @Override
+    public Product findByIdProduct(Long id) {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if (optionalProduct.isPresent()){
+            return optionalProduct.get();
+        }
+        return null;
+    }
 
     @Override
     public ProductResponse save(ProductRequest productRequest)  throws EntityExistsException {

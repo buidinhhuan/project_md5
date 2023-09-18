@@ -34,6 +34,6 @@ public class Users {
     private Set<Role> roles = new HashSet<>();
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "users")
     private List<Order> orders;
-
-
+     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "users")
+    private List<CartItem> cartItem;
 }

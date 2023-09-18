@@ -1,22 +1,18 @@
 package ra.controller;
 
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ra.model.domain.CartItem;
+import ra.model.domain.Order;
 import ra.model.domain.Product;
 import ra.model.domain.Users;
-import ra.model.dto.request.CartItemRequest;
- import ra.model.dto.response.CartItemResponse;
-import ra.model.dto.response.ProductResponse;
-import ra.security.user_principle.UserDetailService;
+ import ra.security.user_principle.UserDetailService;
 import ra.service.impl.CartItemService;
 import ra.service.impl.ProductService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -27,27 +23,70 @@ public class CartController {
     private CartItemService cartItemService;
     @Autowired
     private UserDetailService userDetailService;
+    @Autowired
+    private ProductService productService;
+
     @GetMapping("/findAll")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<List<CartItemResponse>> getAllCartItem() {
-        Long userId= userDetailService.getUserFromAuthentication().getId();
-        List<CartItemResponse> cartItemResponses= (List<CartItemResponse>) cartItemService.findById(userId);
-        return new  ResponseEntity<>(cartItemResponses, HttpStatus.OK);
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<?> findAllByUser() {
+        Users users = userDetailService.getUserFromAuthentication();
+        List<CartItem> cartItems = users.getCartItem();
+        return new ResponseEntity<>(cartItems, HttpStatus.OK);
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<CartItemResponse> findById(@PathVariable Long id ){
-        return  new ResponseEntity<>(cartItemService.findById(id),HttpStatus.OK);
+
+    @PostMapping("/addToCart/{productId}")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<?> addToCart(@PathVariable Long productId) {
+        Users users = userDetailService.getUserFromAuthentication();
+        Product product = productService.findByIdProduct(productId);
+        if (product == null) {
+            return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
+        }else {
+        cartItemService.addToCart(users, product);
+        return new ResponseEntity<>("Product added to cart", HttpStatus.OK);
+        }
     }
-    @PostMapping
-    public ResponseEntity<CartItemResponse> create(@RequestBody @Valid CartItemRequest cartItemRequest) {
-        return new ResponseEntity<>(cartItemService.save(cartItemRequest),HttpStatus.CREATED);
+
+    @PutMapping("/updateQuantity/{productId}/{newQuantity}")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<?> updateProductQuantity(@PathVariable Long productId, @PathVariable Integer newQuantity) {
+        Users user = userDetailService.getUserFromAuthentication();
+
+        // Sử dụng productId để lấy thông tin sản phẩm từ cơ sở dữ liệu
+        Product product = productService.findByIdProduct(productId);
+
+        if (product == null) {
+            return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
+        }
+
+        // Gọi phương thức để thay đổi số lượng sản phẩm trong giỏ hàng của người dùng
+        cartItemService.updateProductQuantity(user, product, newQuantity);
+        return new ResponseEntity<>("update thành công",HttpStatus.OK);
+     }
+
+    @GetMapping("/productQuantity")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<Integer> countProductQuantity() {
+        Users user = userDetailService.getUserFromAuthentication();
+        Integer productQuantity = cartItemService.countProductQuantity(user);
+        return new ResponseEntity<>(productQuantity, HttpStatus.OK);
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<CartItemResponse> update(@RequestBody @Valid CartItemRequest cartItemRequest,@PathVariable Long id){
-        return new ResponseEntity<>(cartItemService.update(cartItemRequest,id),HttpStatus.CREATED);
+
+    @GetMapping("/itemQuantity")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<Long> countItemQuantity() {
+        Users user = userDetailService.getUserFromAuthentication();
+        Long itemQuantity = cartItemService.countItemQuantity(user);
+        return new ResponseEntity<>(itemQuantity, HttpStatus.OK);
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<CartItemResponse> deleteById(@PathVariable Long id ){
-        return  new ResponseEntity<>(cartItemService.delete(id),HttpStatus.OK);
+
+    @GetMapping("/totalPayment")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<Float> countTotalPayment() {
+        Users user = userDetailService.getUserFromAuthentication();
+        Float totalPayment = cartItemService.countTotalPayment(user);
+        return new ResponseEntity<>(totalPayment, HttpStatus.OK);
     }
+
+
 }

@@ -1,5 +1,6 @@
 package ra.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +21,9 @@ public class CartItem {
     @JoinColumn(name = "product_id")
     private Product product;
     private int quantity;
-    @OneToOne
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "user_id")
     private Users users  ;
 
 }

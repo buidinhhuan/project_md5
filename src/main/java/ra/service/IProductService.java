@@ -14,6 +14,7 @@ import java.util.Optional;
 public interface IProductService{
     List<ProductResponse> findAll();
     ProductResponse findById(Long id);
+    Product findByIdProduct(Long id);
     ProductResponse save(ProductRequest productRequest) ;
     ProductResponse update(ProductRequest productRequest,Long id);
     ProductResponse delete(Long id);

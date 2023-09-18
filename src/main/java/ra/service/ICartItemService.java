@@ -1,15 +1,19 @@
 package ra.service;
 
-import ra.model.dto.request.CartItemRequest;
-import ra.model.dto.response.CartItemResponse;
+
+import ra.model.domain.CartItem;
+import ra.model.domain.Product;
+import ra.model.domain.Users;
 
 import java.util.List;
 
 public interface ICartItemService {
-    List<CartItemResponse> findAll();
-    CartItemResponse findById(Long id);
-    CartItemResponse save(CartItemRequest cartItemRequest) ;
-    CartItemResponse update(CartItemRequest cartItemRequest, Long id);
-    CartItemResponse delete(Long id);
+        List<CartItem> findAll();
+        void addToCart(Users users, Product product );
+        void   updateProductQuantity(Users users, Product product,Integer quantity);
+         Integer countProductQuantity( Users users);
+        Long countItemQuantity( Users users);
+        Float countTotalPayment( Users users);
+
 
 }
