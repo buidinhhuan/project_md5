@@ -22,8 +22,7 @@ public class Category {
     @Column(unique = true)
     private String name;
     private boolean status;
-    @JsonIgnore //để ngăn Jackson chuyển đổi nó thành JSON
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "category")
+     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "category")
     private List<Product> products = new ArrayList<>();
 
 }

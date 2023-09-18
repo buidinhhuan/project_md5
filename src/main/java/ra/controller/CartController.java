@@ -9,7 +9,7 @@ import ra.model.domain.CartItem;
 import ra.model.domain.Order;
 import ra.model.domain.Product;
 import ra.model.domain.Users;
- import ra.security.user_principle.UserDetailService;
+import ra.security.user_principle.UserDetailService;
 import ra.service.impl.CartItemService;
 import ra.service.impl.ProductService;
 
@@ -41,9 +41,9 @@ public class CartController {
         Product product = productService.findByIdProduct(productId);
         if (product == null) {
             return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
-        }else {
-        cartItemService.addToCart(users, product);
-        return new ResponseEntity<>("Product added to cart", HttpStatus.OK);
+        } else {
+            cartItemService.addToCart(users, product);
+            return new ResponseEntity<>("Product added to cart", HttpStatus.OK);
         }
     }
 
@@ -61,8 +61,38 @@ public class CartController {
 
         // Gọi phương thức để thay đổi số lượng sản phẩm trong giỏ hàng của người dùng
         cartItemService.updateProductQuantity(user, product, newQuantity);
-        return new ResponseEntity<>("update thành công",HttpStatus.OK);
-     }
+        return new ResponseEntity<>("update thành công", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{cartId}")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<?> deleteByCartId(@PathVariable Long cartId) {
+        Users users = userDetailService.getUserFromAuthentication();
+        CartItem cartItem = null;
+        try {
+             cartItem = cartItemService.findById(cartId);
+            if (users.getId() == cartItem.getUsers().getId()) {
+                cartItemService.delete(cartId);
+                return new ResponseEntity<>("Đã xoá thàn công", HttpStatus.OK);
+            }else if (cartItem.getId()==null){
+                return new ResponseEntity<>("Id not found", HttpStatus.NOT_FOUND);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>("Id not found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Id not found", HttpStatus.NOT_FOUND);
+    }
+    @DeleteMapping("/deleteAll")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<?> deleteByCart() {
+        Users users = userDetailService.getUserFromAuthentication();
+             if (!users.getCartItem().isEmpty()){
+                cartItemService.deleteAll(users.getId());
+                return new ResponseEntity<>("Delete Success", HttpStatus.OK);
+            }else {
+                return new ResponseEntity<>("CartItem is empty", HttpStatus.OK);
+            }
+    }
 
     @GetMapping("/productQuantity")
     @PreAuthorize("hasAnyRole('USER')")

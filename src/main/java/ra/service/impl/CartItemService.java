@@ -11,6 +11,7 @@ import ra.service.ICartItemService;
 
 import javax.persistence.EntityExistsException;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -21,6 +22,12 @@ public class CartItemService implements ICartItemService {
     @Override
     public List<CartItem> findAll() {
         return icartItemRepository.findAll();
+    }
+
+    @Override
+    public CartItem findById(Long id) {
+        CartItem cartItem = icartItemRepository.findById(id).get();
+         return cartItem;
     }
 
     @Override
@@ -52,18 +59,12 @@ public class CartItemService implements ICartItemService {
         } else {
             throw new EntityExistsException("Product not found in cart");
         }
-
     }
 
-
-
-//    public void removeProductInCart(Users user, Product product, Long id) throws EntityExistsException {
-//        CartItem cartItem = icartItemRepository.findByUserAndProduct(user, product);
-//        if (cartItem == null) {
-//            throw new EntityExistsException("ID product not found");
-//        }
-//        icartItemRepository.deleteById(id);
-//    }
+    @Override
+    public void deleteAll(Long id) {
+        icartItemRepository.deleteAllByUsersId(id);
+    }
 
     @Override
     public Integer countProductQuantity(Users user) {
@@ -78,5 +79,10 @@ public class CartItemService implements ICartItemService {
     @Override
     public Float countTotalPayment(Users user) {
         return icartItemRepository.sumTotalPaymentByUser(user);
+    }
+
+    @Override
+    public void delete(Long id) {
+        icartItemRepository.deleteById(id);
     }
 }

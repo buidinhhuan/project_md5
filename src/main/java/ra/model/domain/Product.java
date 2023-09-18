@@ -1,5 +1,6 @@
 package ra.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +25,8 @@ public class Product {
     private String imgUrl;
     private boolean status;
     @ManyToOne
+    @JsonIgnore //để ngăn Jackson chuyển đổi nó thành JSON
+
     @JoinColumn(name = "category_id")
     private Category category;
 }
