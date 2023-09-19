@@ -1,7 +1,5 @@
 package ra.service;
-
-import ra.model.domain.Category;
-import ra.model.dto.request.CategoryRequest;
+ import ra.model.dto.request.CategoryRequest;
 import ra.model.dto.response.CategoryResponse;
 
 

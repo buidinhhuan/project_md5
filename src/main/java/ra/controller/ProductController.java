@@ -26,11 +26,11 @@ public class ProductController {
         return new  ResponseEntity<>(productService.findById(id), HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<ProductResponse> create(@RequestBody @Valid ProductRequest productRequest) {
+    public ResponseEntity<ProductResponse> create(@ModelAttribute ProductRequest productRequest) {
         return new ResponseEntity<>(productService.save(productRequest),HttpStatus.CREATED);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> update(@RequestBody @Valid ProductRequest productRequest,@PathVariable Long id){
+    public ResponseEntity<ProductResponse> update(@ModelAttribute ProductRequest productRequest,@PathVariable Long id){
         return new ResponseEntity<>(productService.update(productRequest,id),HttpStatus.CREATED);
     }
     @DeleteMapping("/{id}")

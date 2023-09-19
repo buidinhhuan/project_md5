@@ -1,6 +1,7 @@
 package ra.service.mapper;
 
 import org.springframework.stereotype.Component;
+import ra.model.domain.Category;
 import ra.model.domain.Product;
 import ra.model.dto.request.ProductRequest;
 import ra.model.dto.response.ProductResponse;
@@ -15,9 +16,9 @@ public class ProductMapper implements IGenericMapper<Product, ProductRequest, Pr
                 .price(productRequest.getPrice())
                 .stock(productRequest.getStock())
                 .description(productRequest.getDescription())
-                .imgUrl(productRequest.getImgUrl())
+                .imgUrl_main(String.valueOf(productRequest.getImgUrl()))
                 .status(productRequest.isStatus())
-                .category(productRequest.getCategory())
+                .category( productRequest.getCategory())
                 .build();
     }
 
@@ -29,7 +30,7 @@ public class ProductMapper implements IGenericMapper<Product, ProductRequest, Pr
                 .price(product.getPrice())
                 .stock(product.getStock())
                 .description(product.getDescription())
-                .imgUrl(product.getImgUrl())
+                .imgUrl(product.getImgUrl_main())
                 .status(product.isStatus())
                 .category(product.getCategory().getName())
                 .build();

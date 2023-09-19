@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,7 +24,10 @@ public class Product {
     private double price;
     private int stock;
     private String description;
-    private String imgUrl;
+    private String imgUrl_main;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
+    @JsonIgnore
+    private List<ImgProduct> images = new ArrayList<>();
     private boolean status;
     @ManyToOne
     @JsonIgnore //để ngăn Jackson chuyển đổi nó thành JSON
@@ -30,17 +35,4 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", productName='" + productName + '\'' +
-                ", price=" + price +
-                ", stock=" + stock +
-                ", description='" + description + '\'' +
-                ", imgUrl='" + imgUrl + '\'' +
-                ", status=" + status +
-                ", category=" + category +
-                '}';
-    }
 }

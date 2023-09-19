@@ -28,45 +28,49 @@ public class OrderController {
     private OrderService orderService;
     @Autowired
     private UserDetailService userDetailService;
+
     @GetMapping("/findAll")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> findAllOrder() {
         List<Order> listOrder = orderService.findAll();
         return new ResponseEntity<>(listOrder, HttpStatus.OK);
     }
+
     @GetMapping("/findAllByUser")
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<?> findAllByUser() {
-      Users users = userDetailService.getUserFromAuthentication();
-      List<Order> orders =users.getOrders();
-      return new ResponseEntity<>(orders,HttpStatus.OK);
+        Users users = userDetailService.getUserFromAuthentication();
+        List<Order> orders = users.getOrders();
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
+
     @PostMapping("/checkOut")
     @PreAuthorize("hasAnyRole('USER')")
-    public ResponseEntity<?> checkOut(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<?> checkOut(@PathVariable OrderRequest orderRequest) {
         Users users = userDetailService.getUserFromAuthentication();
-        List<OrderResponse> orderResponses = Collections.singletonList(orderService.checkOut(users ,users.getCartItem(), orderRequest));
+        List<OrderResponse> orderResponses = Collections.singletonList(orderService.checkOut(users, users.getCartItem(), orderRequest));
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 
     @PutMapping("/cancelled/{id}")
     @PreAuthorize("hasAnyRole('USER')")
-    public ResponseEntity<?> cancelled( @PathVariable Long id) {
+    public ResponseEntity<?> cancelled(@PathVariable Long id) {
         Users users = userDetailService.getUserFromAuthentication();
         try {
             Order orderCancelled = orderService.cancelled(users, id);
-            return ResponseEntity.ok("Đã hủy đơn hàng có ID: " + orderCancelled.getId());
+            return new ResponseEntity<>(orderCancelled, HttpStatus.OK);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
     @PutMapping("/confirm/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<?> confirmOrder( @PathVariable Long id) {
+    public ResponseEntity<?> confirmOrder(@ModelAttribute Long id) {
         Users users = userDetailService.getUserFromAuthentication();
         try {
             Order orderConfirm = orderService.confirmOrder(users, id);
-            return ResponseEntity.ok("Đã xác nhận đơn hàng có ID: " + orderConfirm.getId());
+            return new ResponseEntity<>(orderConfirm, HttpStatus.OK);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

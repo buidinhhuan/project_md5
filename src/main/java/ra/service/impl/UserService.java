@@ -62,16 +62,7 @@ public class UserService implements IUserService {
             );
         }
 
-//        for (String role: form.getRoles()) {
-//            switch (role){
-//                case "admin":
-//                    roles.add(roleService.findByRoleName(RoleName.ADMIN));
-//                case "seller":
-//                    roles.add(roleService.findByRoleName(RoleName.SELLER));
-//                case "user":
-//                    roles.add(roleService.findByRoleName(RoleName.USER));
-//            }
-//        }
+
         Users users = Users.builder()
                 .name(form.getName())
                 .email(form.getEmail())
@@ -87,11 +78,13 @@ public class UserService implements IUserService {
     @Override
     public Users update(UserPrinciple userPrinciple, Long id) throws EntityExistsException{
         Optional<Users> optionalUser = userRepository.findById(id);
-
-        if (!optionalUser.isPresent()) {
+        if (!optionalUser.isPresent() ) {
             throw new EntityExistsException("User not found with id: " + id);
         }
         Users userToUpdate = optionalUser.get();
+        if (userToUpdate.getId() == 1 ){
+            throw new EntityExistsException("User not found with id: " + id);
+        }
         // Kiểm tra xem userPrinciple có quyền cập nhật tài khoản này không
 //        if (!userPrinciple.getId().equals(userToUpdate.getId())) {
 //            throw new EntityExistsException("You do not have permission to update this user");
