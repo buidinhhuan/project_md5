@@ -31,8 +31,11 @@ public class CartItemService implements ICartItemService {
     }
 
     @Override
-    public void addToCart(Users user, Product product) {
+    public void addToCart(Users user, Product product)  throws EntityExistsException{
         CartItem cartItem = icartItemRepository.findByUsersAndProduct(user, product);
+        if (product.isStatus()==false){
+            throw  new EntityExistsException("sản phẩm đã hết hàng");
+        }
         if (cartItem == null) {
             cartItem = new CartItem();
             cartItem.setUsers(user);

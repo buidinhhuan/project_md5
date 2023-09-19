@@ -19,5 +19,5 @@ public class JwtResponse {
     private String name;
     private String username;
     private boolean status;
-     private List<String> roles = new ArrayList<>();
+    private List<String> roles = new ArrayList<>();
  }

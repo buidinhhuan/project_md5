@@ -24,6 +24,14 @@ public class ProductService implements IProductService {
 
     @Override
     public List<ProductResponse> findAll() {
+      List<Product > product = productRepository.findAll();
+         for (Product p:product
+             ) {
+            if (p.getStock() <=0){
+                p.setStatus(false);
+            productRepository.save(p);
+            }
+        }
         return productRepository.findAll().stream()
                 .map(c->productMapper.toResponse(c))
                 .collect(Collectors.toList());

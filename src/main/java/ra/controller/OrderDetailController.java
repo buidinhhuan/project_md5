@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ra.model.domain.Order;
 import ra.model.domain.OrderDetail;
+import ra.model.domain.Users;
+import ra.security.user_principle.UserDetailService;
 import ra.service.impl.OrderDetailService;
 import ra.service.impl.OrderService;
 
@@ -22,10 +24,13 @@ import java.util.Optional;
 public class OrderDetailController {
     @Autowired
     private OrderDetailService orderDetailService;
+    @Autowired
+    private UserDetailService userDetailService;
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<?> OrderDetail(@PathVariable("id") Long id) throws EntityExistsException {
-        Optional<OrderDetail> orderDetailOptional = orderDetailService.findById(id);
+        Users users = userDetailService.getUserFromAuthentication();
+        Optional<OrderDetail> orderDetailOptional = orderDetailService.findById(users,id);
         if (!orderDetailOptional.isPresent()) {
             throw  new  EntityExistsException("id oderDetail not found");
         }

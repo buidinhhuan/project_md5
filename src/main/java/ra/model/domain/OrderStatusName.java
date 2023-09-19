@@ -1,6 +1,5 @@
 package ra.model.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,15 +12,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderDetail {
+public class OrderStatusName {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-    private int quantity;
- }
+    private String statusName;
+}

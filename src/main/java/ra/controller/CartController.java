@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ra.model.domain.CartItem;
-import ra.model.domain.Order;
 import ra.model.domain.Product;
 import ra.model.domain.Users;
 import ra.security.user_principle.UserDetailService;
@@ -30,7 +29,7 @@ public class CartController {
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<?> findAllByUser() {
         Users users = userDetailService.getUserFromAuthentication();
-        List<CartItem> cartItems = users.getCartItem();
+         List<CartItem> cartItems = users.getCartItem();
         return new ResponseEntity<>(cartItems, HttpStatus.OK);
     }
 
@@ -109,7 +108,6 @@ public class CartController {
         Long itemQuantity = cartItemService.countItemQuantity(user);
         return new ResponseEntity<>(itemQuantity, HttpStatus.OK);
     }
-
     @GetMapping("/totalPayment")
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<Float> countTotalPayment() {

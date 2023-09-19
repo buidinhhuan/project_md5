@@ -34,7 +34,10 @@ public class Users {
             ,inverseJoinColumns = @JoinColumn(name="role_id"))
     private Set<Role> roles = new HashSet<>();
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "users")
+    @JsonIgnore
     private List<Order> orders;
      @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "users")
     private List<CartItem> cartItem;
+
+
 }

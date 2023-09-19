@@ -1,36 +1,32 @@
-package ra.model.domain;
+package ra.model.dto.response;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import javax.persistence.*;
-import java.util.*;
+import ra.model.domain.OrderDetail;
+import ra.model.domain.OrderStatusName;
+import ra.model.domain.Users;
 
-@Entity
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Table(name = "orders")
-public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class OrderResponse {
     private Long id;
     private String receiverName;
     private String address;
     private String phone;
     private Date date;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
     @JsonIgnore
     private Users users;
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "order")
     @JsonIgnore
     private List<OrderDetail> orderDetails= new ArrayList<>();
     private double totalAmount;
-    @ManyToOne
-    @JoinColumn(name = "orderStatusName_id")
-    private OrderStatusName orderStatusNames;
-
+    private OrderStatusName orderStatusName;
 }

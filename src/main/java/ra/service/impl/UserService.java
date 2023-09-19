@@ -74,6 +74,7 @@ public class UserService implements IUserService {
 //        }
         Users users = Users.builder()
                 .name(form.getName())
+                .email(form.getEmail())
                 .username(form.getUsername())
                 .password(passwordEncoder.encode(form.getPassword()))
                 .status(true)

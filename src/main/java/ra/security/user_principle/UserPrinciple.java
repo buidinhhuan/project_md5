@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class UserPrinciple implements UserDetails {
     private Long id;
     private String name;
+    private String email;
     private String username;
     @JsonIgnore
     private String password;
@@ -36,6 +37,7 @@ public class UserPrinciple implements UserDetails {
         return UserPrinciple.builder()
                 .id(user.getId())
                 .name(user.getName())
+                .email(user.getEmail())
                 .username(user.getUsername())
                 .status(user.isStatus())
                 .password(user.getPassword())

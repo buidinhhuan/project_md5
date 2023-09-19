@@ -1,12 +1,10 @@
 package ra.advice;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ra.exception.CartException;
-import ra.exception.CategoryException;
-import ra.exception.LoginException;
-import ra.exception.ProductException;
+import ra.exception.*;
 
 import javax.persistence.EntityExistsException;
 import java.rmi.AccessException;
@@ -27,14 +25,19 @@ public class ControllerAdvice {
     }
     @ExceptionHandler(CategoryException.class)
     public  ResponseEntity<String> categoryFail(EntityExistsException entityExistsException){
-        return new ResponseEntity<>(entityExistsException.getMessage(),HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(entityExistsException.getMessage(),HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(ProductException.class)
     public  ResponseEntity<String> productFail(EntityExistsException entityExistsException){
-        return new ResponseEntity<>(entityExistsException.getMessage(),HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(entityExistsException.getMessage(),HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(CartException.class)
     public  ResponseEntity<String> cartFail(EntityExistsException entityExistsException){
-        return new ResponseEntity<>(entityExistsException.getMessage(),HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(entityExistsException.getMessage(),HttpStatus.BAD_REQUEST);
     }
+
+//    @ExceptionHandler(OrderException.class)
+//    public ResponseEntity<String> OrderFail( ChangeSetPersister.NotFoundException notFoundException) {
+//        return new ResponseEntity<>("ID not found", HttpStatus.NOT_FOUND);
+//    }
 }
