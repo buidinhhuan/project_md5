@@ -33,4 +33,18 @@ public class Order {
     @JoinColumn(name = "orderStatusName_id")
     private OrderStatusName orderStatusNames;
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", receiverName='" + receiverName + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", date=" + date +
+                ", users=" + users +
+                ", orderDetails=" + orderDetails +
+                ", totalAmount=" + totalAmount +
+                ", orderStatusNames=" + orderStatusNames +
+                '}';
+    }
 }

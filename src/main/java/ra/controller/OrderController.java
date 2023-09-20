@@ -46,7 +46,7 @@ public class OrderController {
 
     @PostMapping("/checkOut")
     @PreAuthorize("hasAnyRole('USER')")
-    public ResponseEntity<?> checkOut(@PathVariable OrderRequest orderRequest) {
+    public ResponseEntity<?> checkOut(@ModelAttribute OrderRequest orderRequest) {
         Users users = userDetailService.getUserFromAuthentication();
         List<OrderResponse> orderResponses = Collections.singletonList(orderService.checkOut(users, users.getCartItem(), orderRequest));
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
@@ -66,7 +66,7 @@ public class OrderController {
 
     @PutMapping("/confirm/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<?> confirmOrder(@ModelAttribute Long id) {
+    public ResponseEntity<?> confirmOrder(@PathVariable Long id) {
         Users users = userDetailService.getUserFromAuthentication();
         try {
             Order orderConfirm = orderService.confirmOrder(users, id);

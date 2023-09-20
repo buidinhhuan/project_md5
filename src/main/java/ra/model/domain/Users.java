@@ -39,5 +39,18 @@ public class Users {
      @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "users")
     private List<CartItem> cartItem;
 
-
+    @Override
+    public String toString() {
+        return "Users{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", status=" + status +
+                ", roles=" + roles +
+                ", orders=" + orders +
+                ", cartItem=" + cartItem +
+                '}';
+    }
 }

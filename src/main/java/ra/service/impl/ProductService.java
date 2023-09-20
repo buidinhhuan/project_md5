@@ -73,7 +73,10 @@ public class ProductService implements IProductService {
 
             // Tạo danh sách ảnh sản phẩm
             List<ImgProduct> images = listUrl.stream()
-                    .map(imageUrl -> ImgProduct.builder().image(imageUrl).product(product).build())
+                    .map(imageUrl -> ImgProduct.builder()
+                            .image(imageUrl)
+                            .product(product)
+                            .build())
                     .collect(Collectors.toList());
 
             // Gán danh sách ảnh sản phẩm vào sản phẩm
@@ -113,8 +116,10 @@ public class ProductService implements IProductService {
 
             // Tạo danh sách ảnh sản phẩm
             List<ImgProduct> images = listUrl.stream()
-                    .map(imageUrl -> ImgProduct.builder().image(imageUrl).product(existingProduct).build())
-                    .collect(Collectors.toList());
+                    .map(imageUrl -> ImgProduct.builder()
+                            .image(imageUrl)
+                            .product(existingProduct).build())
+                            .collect(Collectors.toList());
 
             // Gán danh sách ảnh sản phẩm vào sản phẩm
             existingProduct.setImages(images);
