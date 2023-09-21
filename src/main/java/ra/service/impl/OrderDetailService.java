@@ -22,7 +22,7 @@ public class OrderDetailService implements IOrderDetailService<OrderDetail> {
     @Override
     public Optional<OrderDetail> findById(Users users, Long id) throws EntityExistsException {
         if (!orderDetailRepository.findOrderDetailByOrder_UsersAndId(users,id).isPresent()){
-            throw new EntityExistsException("ID OrderDetail not found");
+            throw new EntityExistsException("ID chi tiết đơn hàng không tồn tại");
         }
         return orderDetailRepository.findOrderDetailByOrder_UsersAndId(users, id);
     }

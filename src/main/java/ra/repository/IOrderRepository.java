@@ -8,5 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface IOrderRepository extends JpaRepository<Order,Long> {
-
-}
+ List<Order> findByUsersIdAndOrderStatusNamesId(Long userId, Long StatusId);
+ List<Order> findOrdersByOrderStatusNamesId(Long StatusId);
+ }

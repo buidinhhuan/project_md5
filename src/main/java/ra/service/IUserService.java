@@ -1,6 +1,8 @@
 package ra.service;
 
 import ra.model.domain.Users;
+import ra.model.dto.request.ChangePassword;
+import ra.model.dto.request.ForgotPasswordRequest;
 import ra.model.dto.request.FormSignUpDto;
 import ra.security.user_principle.UserPrinciple;
 
@@ -12,5 +14,7 @@ public interface IUserService {
     Optional<Users> findByUserName(String username);
     Optional<Users> findById(Long userId);
     Users save(FormSignUpDto users);
-    Users update(UserPrinciple users,Long id);
+    Users unlockAndBlock(Long id);
+    Users changePassword(Users users, ChangePassword changePassword);
+    List<Users> forgotPassword(ForgotPasswordRequest forgotPasswordRequest);
 }

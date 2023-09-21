@@ -12,6 +12,7 @@ import ra.model.domain.OrderDetail;
 import ra.model.domain.Users;
 import ra.model.dto.request.OrderRequest;
 import ra.model.dto.response.OrderResponse;
+import ra.repository.IOrderRepository;
 import ra.security.user_principle.UserDetailService;
 import ra.service.impl.OrderDetailService;
 import ra.service.impl.OrderService;
@@ -26,6 +27,7 @@ import java.util.Optional;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+
     @Autowired
     private UserDetailService userDetailService;
 
@@ -44,12 +46,34 @@ public class OrderController {
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
+    @GetMapping("/findOrdersByUserAndStatus/{id}")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<List<Order>> findOrdersByUserAndStatus(@PathVariable("id") Long id) {
+         Users loggedInUser = userDetailService.getUserFromAuthentication();
+        if (loggedInUser == null) {
+             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+         List<Order> orders = orderService.findByOrderStatusByUser(loggedInUser.getId(), id);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+    @GetMapping("/findAllByOrderStatus/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<List<Order>> findAllByOrderStatus(@PathVariable("id") Long id) {
+        List<Order> orders = orderService.findOrdersByOrderStatusNamesId(id);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
     @PostMapping("/checkOut")
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<?> checkOut(@ModelAttribute OrderRequest orderRequest) {
         Users users = userDetailService.getUserFromAuthentication();
+        try {
+
         List<OrderResponse> orderResponses = Collections.singletonList(orderService.checkOut(users, users.getCartItem(), orderRequest));
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
+        }catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PutMapping("/cancelled/{id}")

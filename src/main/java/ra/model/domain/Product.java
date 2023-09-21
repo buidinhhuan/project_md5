@@ -31,7 +31,6 @@ public class Product {
     private boolean status;
     @ManyToOne
     @JsonIgnore //để ngăn Jackson chuyển đổi nó thành JSON
-
     @JoinColumn(name = "category_id")
     private Category category;
 

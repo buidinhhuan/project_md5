@@ -42,7 +42,7 @@ public class CategoryService implements ICategoryService {
     @Override
     public CategoryResponse save(CategoryRequest categoryRequest) throws EntityExistsException {
         if (categoryRepository.existsCategoryByName(categoryRequest.getName())) {
-            throw new EntityExistsException("Category is exist");
+            throw new EntityExistsException("Danh mục đã tồn tại");
         }
         Category category = categoryRepository.save(categoryMapper.toEntity(categoryRequest));
 
@@ -52,7 +52,7 @@ public class CategoryService implements ICategoryService {
     @Override
     public CategoryResponse update(CategoryRequest categoryRequest, Long id) throws EntityExistsException {
         if (!categoryRepository.findById(id).isPresent()) {
-            throw new EntityExistsException("ID Category not found");
+            throw new EntityExistsException("ID danh mục không tồn tại");
         }
         Category category = categoryMapper.toEntity(categoryRequest);
         category.setId(id);
@@ -64,11 +64,11 @@ public class CategoryService implements ICategoryService {
         Optional<Category> categoryOptional = categoryRepository.findById(id);
 
         if (!categoryOptional.isPresent()) {
-            throw new EntityExistsException("ID Category not found");
+            throw new EntityExistsException("ID danh mục không tồn tại");
         } else {
             List<Product> products = productRepository.findByCategoryId(id);
             if (!products.isEmpty()) {
-                throw new EntityExistsException("This category contains products, which cannot be deleted.");
+                throw new EntityExistsException("Danh mục đang chứa sản phẩm không thể xoá");
             } else {
                 categoryRepository.deleteById(id);
                 return categoryMapper.toResponse(categoryOptional.get());

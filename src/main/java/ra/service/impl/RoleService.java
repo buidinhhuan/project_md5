@@ -14,6 +14,6 @@ public class RoleService implements IRoleService {
     @Override
     public Role findByRoleName(RoleName roleName)  {
         return roleRepository.findByRoleName(roleName)
-                .orElseThrow(()->new RuntimeException("Role Not Found"));
+                .orElseThrow(()->new RuntimeException("Không tồn tại quyền"));
     }
 }

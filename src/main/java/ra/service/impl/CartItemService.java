@@ -33,7 +33,7 @@ public class CartItemService implements ICartItemService {
     @Override
     public void addToCart(Users user, Product product)  throws EntityExistsException{
         CartItem cartItem = icartItemRepository.findByUsersAndProduct(user, product);
-        if (product.isStatus()==false){
+        if (product.isStatus()==false || product.getStock()<=0){
             throw  new EntityExistsException("sản phẩm đã hết hàng");
         }
         if (cartItem == null) {
@@ -58,9 +58,9 @@ public class CartItemService implements ICartItemService {
                 cartItem.setQuantity(newQuantity);
                 icartItemRepository.save(cartItem);
             }
-            throw new EntityExistsException("Product quantity updated");
+            throw new EntityExistsException("Số lượng sản phẩm đã được cập nhật");
         } else {
-            throw new EntityExistsException("Product not found in cart");
+            throw new EntityExistsException("không thấy sản phẩm trong giỏ hàng");
         }
     }
 

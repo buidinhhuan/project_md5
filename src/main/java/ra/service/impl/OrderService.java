@@ -10,6 +10,7 @@ import ra.repository.IOrderDetailRepository;
 import ra.repository.IOrderRepository;
 import ra.repository.IOrderStatusNameRepository;
 import ra.repository.IProductRepository;
+import ra.security.user_principle.UserDetailService;
 import ra.service.IOrderService;
 import ra.service.IProductService;
 import ra.service.mapper.OrderMapper;
@@ -25,8 +26,6 @@ public class OrderService implements IOrderService<Order> {
     @Autowired
     private IOrderRepository orderRepository;
     @Autowired
-    private IOrderDetailRepository orderDetailRepository;
-     @Autowired
     private IOrderStatusNameRepository orderStatusNameRepository;
     @Autowired
     private CartItemService cartItemService;
@@ -37,6 +36,7 @@ public class OrderService implements IOrderService<Order> {
     @Autowired
     private IProductRepository productRepository;
 
+
     @Override
     public List<Order> findAll() {
         return orderRepository.findAll();
@@ -45,7 +45,7 @@ public class OrderService implements IOrderService<Order> {
     @Override
     public Optional<Order> findById(Long id) throws EntityExistsException {
         if (!orderRepository.findById(id).isPresent()) {
-            throw new EntityExistsException("ID Order not found");
+            throw new EntityExistsException("ID đơn hàng không tồn tại");
         }
         return orderRepository.findById(id);
     }
@@ -56,8 +56,11 @@ public class OrderService implements IOrderService<Order> {
     }
 
     public OrderResponse checkOut(Users users, List<CartItem> cartItems, OrderRequest orderRequest) {
-        Order order = createOrder(users, cartItems);
+        if (cartItems.isEmpty()) {
+            throw new RuntimeException("giỏ hàng rỗng");
+        }
 
+        Order order = createOrder(users, cartItems);
         // Thiết lập thông tin đơn hàng từ OrderRequest
         order.setReceiverName(orderRequest.getReceiverName());
         order.setPhone(orderRequest.getPhone());
@@ -73,23 +76,29 @@ public class OrderService implements IOrderService<Order> {
         return orderMapper.toResponse(order);
     }
 
+
     public Order cancelled(Users users, Long id) {
-          Optional<Order> o = orderRepository.findById(id);
-          if (o.isPresent()) {
+        Optional<Order> o = orderRepository.findById(id);
+        if (o.isPresent()) {
             Order order = o.get();
+            if (!order.getUsers().equals(users)) {
+                throw new RuntimeException("ID không tồn tại");
+            }
             if (order.getOrderStatusNames().getId() == 2) {
                 throw new RuntimeException("Đơn hàng đang giao không thể huỷ");
-            } else if (order.getOrderStatusNames().getId() == 4) {
-                throw new RuntimeException("Đơn hàng đã huỷ");
-            } else if (order.getOrderStatusNames().getId() == 3) {
-                throw new RuntimeException("Đơn hàng đã giao thành công  không thể huỷ");
             }
-             for (OrderDetail orderDetail : order.getOrderDetails()) {
-                 Product product = orderDetail.getProduct();
-                 int orderQuantity = orderDetail.getQuantity();
-                 product.setStock(product.getStock() + orderQuantity);
-                 productRepository.save(product);
-              }
+            if (order.getOrderStatusNames().getId() == 4) {
+                throw new RuntimeException("Đơn hàng đã huỷ");
+            }
+            if (order.getOrderStatusNames().getId() == 3) {
+                throw new RuntimeException("Đơn hàng đã giao");
+            }
+            for (OrderDetail orderDetail : order.getOrderDetails()) {
+                Product product = orderDetail.getProduct();
+                int orderQuantity = orderDetail.getQuantity();
+                product.setStock(product.getStock() + orderQuantity);
+                productRepository.save(product);
+            }
             order.setOrderStatusNames(findByIdStatusOder(4L).get());
             return orderRepository.save(order);
 
@@ -98,11 +107,23 @@ public class OrderService implements IOrderService<Order> {
         }
     }
 
+    public List<Order> findByOrderStatusByUser(Long userId, Long id) {
+        return orderRepository.findByUsersIdAndOrderStatusNamesId(userId,id);
+    }
+//  public List<Order> findAllByOrderStatus( Long id) {
+//        return orderRepository.findAllByUsersOrderStatusNamesId(id);
+//    }
+
+    public List<Order> findOrdersByOrderStatusNamesId(Long StatusId){
+        return orderRepository.findOrdersByOrderStatusNamesId(StatusId);
+    }
+
+
     public Order confirmOrder(Users users, Long id) {
         Optional<Order> o = orderRepository.findById(id);
         if (o.isPresent()) {
             Order order = o.get();
-            Long  StatusId = order.getOrderStatusNames().getId();
+            Long StatusId = order.getOrderStatusNames().getId();
             if (StatusId == 1) {
                 order.setOrderStatusNames(findByIdStatusOder(2L).get());
                 mailService.sendEmail(order.getUsers().getEmail(), "Đang giao hàng", "Đơn hàng của bạn đang được giao");
@@ -119,13 +140,13 @@ public class OrderService implements IOrderService<Order> {
                 mailService.sendEmail(order.getUsers().getEmail(), "Đơn hàng đã huỷ", "Đơn hàng của bạn đã bị huỷ");
                 order.setOrderStatusNames(findByIdStatusOder(4L).get());
             } else {
-                throw new RuntimeException("Invalid order status");
+                throw new RuntimeException("Trạng thái đơn hàng không hợp lệ");
             }
 
             // Lưu lại đơn hàng đã cập nhật
             return orderRepository.save(order);
         } else {
-            throw new RuntimeException("Id not found");
+            throw new RuntimeException("ID không tồn tại");
         }
     }
 

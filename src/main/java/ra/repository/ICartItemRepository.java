@@ -25,11 +25,6 @@ public interface ICartItemRepository extends JpaRepository<CartItem,Long> {
              "where user_id = :uID",nativeQuery = true)
      void deleteAllByUsersId (@Param("uID") Long uID);
 
-
-
-    // xoá tất cả CartItem của một User
-//    void deleteByUser(Users user);
-
     //tổng số lượng sản phẩm trong giỏ hàng của một User
     @Query("SELECT SUM(ci.quantity) FROM CartItem ci WHERE ci.users = :user")
     Integer sumQuantityByUser(@Param("user") Users user);

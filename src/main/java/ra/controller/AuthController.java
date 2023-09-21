@@ -42,20 +42,17 @@ public class AuthController {
     @PostMapping("/sign-in")
     public ResponseEntity<JwtResponse> signin(@RequestBody FormSignInDto formSignInDto) throws LoginException {
         Authentication authentication =null;
-
         try {
-
-
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(formSignInDto.getUsername(), formSignInDto.getPassword())
             ); // tạo đối tương authentiction để xác thực thông qua username va password
             // tạo token và trả về cho người dùng
         }catch (AuthenticationException auth){
-            throw new LoginException("Username or password is incorrect!");
+            throw new LoginException("Tài khoản mật khẩu không đúng !");
         }
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
-        if (!userPrinciple.isStatus()){
-            throw new LoginException("Your account has been locked");
+        if (!userPrinciple.isStatus() && userPrinciple.getId()!=1){
+            throw new LoginException("Tài khoản của bạn đã bị khoá");
         }
         String token = jwtProvider.generateToken(userPrinciple);
         // lấy ra user principle
@@ -69,7 +66,7 @@ public class AuthController {
                 .status(userPrinciple.isStatus()).build());
     }
     @PostMapping("/sign-up")
-    private ResponseEntity<String> signup(@RequestBody FormSignUpDto formSignUpDto){
+    private ResponseEntity<String> signup(@RequestBody FormSignUpDto formSignUpDto)  {
         userService.save(formSignUpDto);
         mailService.sendEmail(formSignUpDto.getEmail(),"Register succes","ban đã đăng ký thành công");
 //        mailService.sendEmail("bdhuan1999@gmail.com","Register succes","chao huan nhe");

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ra.model.domain.Category;
+import ra.model.domain.ImgProduct;
 
 import java.util.List;
 
@@ -19,5 +20,6 @@ public class ProductResponse {
     private String description;
     private  String imgUrl;
     private boolean status;
+    private List<ImgProduct> imgProductList;
     private String category;
 }

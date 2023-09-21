@@ -2,6 +2,7 @@ package ra.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ra.model.dto.request.CategoryRequest;
 import ra.model.dto.response.CategoryResponse;
@@ -16,24 +17,29 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @GetMapping("findAll")
     public ResponseEntity<List<CategoryResponse>> getAllCategories() {
         return new  ResponseEntity<>(categoryService.findAll(),HttpStatus.OK);
     }
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+
     public ResponseEntity<CategoryResponse> findById(@PathVariable Long id ){
         return  new ResponseEntity<>(categoryService.findById(id),HttpStatus.OK);
     }
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<CategoryResponse> create(@RequestBody @Valid CategoryRequest categoryRequest) {
         return new ResponseEntity<>(categoryService.save(categoryRequest),HttpStatus.CREATED);
     }
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+
     public ResponseEntity<CategoryResponse> update(@RequestBody @Valid CategoryRequest categoryRequest,@PathVariable Long id){
         return new ResponseEntity<>(categoryService.update(categoryRequest,id),HttpStatus.CREATED);
     }
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<CategoryResponse> deleteById(@PathVariable Long id ){
         return  new ResponseEntity<>(categoryService.delete(id),HttpStatus.OK);
     }

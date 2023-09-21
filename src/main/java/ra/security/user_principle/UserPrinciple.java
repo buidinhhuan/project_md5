@@ -26,6 +26,7 @@ public class UserPrinciple implements UserDetails {
     private String email;
     private String username;
     @JsonIgnore
+    private String phone;
     private String password;
     private boolean status;
     private Collection<? extends GrantedAuthority> authorities;
@@ -40,6 +41,7 @@ public class UserPrinciple implements UserDetails {
                 .email(user.getEmail())
                 .username(user.getUsername())
                 .status(user.isStatus())
+                .phone(user.getPhone())
                 .password(user.getPassword())
                 .authorities(list).build();
     }

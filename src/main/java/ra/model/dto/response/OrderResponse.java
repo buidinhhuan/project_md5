@@ -1,6 +1,7 @@
 package ra.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +27,7 @@ public class OrderResponse {
     @JsonIgnore
     private Users users;
     @JsonIgnore
+
     private List<OrderDetail> orderDetails= new ArrayList<>();
     private double totalAmount;
     private OrderStatusName orderStatusName;

@@ -22,5 +22,5 @@ public class ProductRequest {
     private String description;
      private List<MultipartFile> imgUrl;
     private boolean status;
-    private Category category;
+    private Long categoryId;
 }
